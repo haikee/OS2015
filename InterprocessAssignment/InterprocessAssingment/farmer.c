@@ -64,69 +64,79 @@ int main (int argc, char * argv[])
     sprintf (mq_name1, "/mq_request_%s_%d", STUDENT_NAME, getpid());
     sprintf (mq_name2, "/mq_response_%s_%d", STUDENT_NAME, getpid());
 
-    attr.mq_maxmsg  = 10;
+    attr.mq_maxmsg  = MQ_MAX_MESSAGES;
     attr.mq_msgsize = sizeof (MQ_REQUEST_MESSAGE);
     mq_fd_request = mq_open (mq_name1, O_WRONLY | O_CREAT | O_EXCL, 0600, &attr);
 
-    attr.mq_maxmsg  = 10;
+    attr.mq_maxmsg  = MQ_MAX_MESSAGES;
     attr.mq_msgsize = sizeof (MQ_RESPONSE_MESSAGE);
-    mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL, 0600, &attr);
+    mq_fd_response = mq_open (mq_name2, O_RDONLY | O_CREAT | O_EXCL | O_EXCL, 0600, &attr);
 
     getattr(mq_fd_request);
     getattr(mq_fd_response);
 
     //note to self creating children?
 
-    pid_t           processID;      /* Process ID from fork() */
+        pid_t           processID;      /* Process ID from fork() */
+        int i=0;
+    while(i<NROF_WORKERS){
 
-    printf ("parent pid:%d\n", getpid());
-    processID = fork();
-    if (processID < 0)
-    {
-        perror("fork() failed");
-        exit (1);
-    }
-    else
-    {
-        if (processID == 0)
+        printf ("parent pid:%d\n", getpid());
+        processID = fork();
+        if (processID < 0)
         {
-            printf ("child  pid:%d\n", getpid());
-            //execlp ("ps", "ps", "-l", NULL);
-            //execlp ("./c_program", "my_own_name_for_argv0", "first_argument", NULL);
-            execlp ("worker.c", "?", "-l", NULL)
-            // we should never arrive here...
-            perror ("execlp() failed");
+            perror("fork() failed");
+            exit (1);
         }
-        // else: we are still the parent (which continues this program)
+        else
+        {
+            if (processID == 0)
+            {
+                //printf ("child  pid:%d\n", getpid());
+                //execlp ("ps", "ps", "-l", NULL);
+                //execlp ("./c_program", "my_own_name_for_argv0", "first_argument", NULL);
+                execlp ("./worker.c", mq_name1, mq_name2 , NULL);
+                // we should never arrive here...
+                perror ("execlp() failed");
+            }
+            // else: we are still the parent (which continues this program)
 
-        waitpid (processID, NULL, 0);   // wait for the child ?
-        printf ("child %d has been finished\n\n", processID);
+            //waitpid (processID, NULL, 0);   // wait for the child ?
+            //printf ("child %d has been finished\n\n", processID);
+    } i++;
     }
 
     //note to self using message que?
 
-     processID = fork();
-    if (processID < 0)
-    {
-        perror("fork() failed");
-        exit (1);
-    }
-    else
-    {
-        if (processID == 0)
-        {
-            // child-stuff
-            message_queue_child ();
-            exit (0);
-        }
-        else
-        {
+
             // remaining of the parent stuff
 
             // fill request message
-            req.a = 88;
-            req.b = 888;
-            req.c = 8888;
+            int i=0;
+            int j=0;
+            long mqrequest_count =mq_fd_request.mq_getattr().mq_curmsgs;
+            long mqresponse_count =mq_fd_response.mq_getattr().mq_curmsgs;
+
+            while(i<Y_PIXEL){
+            send_status= mq_receive (mq_fd_response (char *) &rsp, sizeof (rsp),NULL);
+            if(mqresponse_count!=(long)0){
+             // read the result and store it in the response message
+            printf ("parent: receiving...\n");
+            mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
+
+            printf ("parent: received: %d, %d, [%d,%d,%d]\n",
+                    rsp.d, rsp.e, rsp.f[0], rsp.f[1], rsp.f[2]);
+            int q=0;
+            while(q<X_PIXEL){
+            output_draw_pixel(q , rsp.d, rsp.f[q]);
+            q++;
+            }
+                   i++;
+                    }else{
+            if(mqrequest_count!=MQ_MAX_MESSAGES & j<Y_PIXEL){}
+            req.a = j;
+            req.b = 0;
+            req.c = 0;
 
             sleep (3);
             // send the request
@@ -134,22 +144,16 @@ int main (int argc, char * argv[])
             mq_send (mq_fd_request, (char *) &req, sizeof (req), 0);
 
             sleep (3);
-            // read the result and store it in the response message
-            printf ("parent: receiving...\n");
-            mq_receive (mq_fd_response, (char *) &rsp, sizeof (rsp), NULL);
-
-            printf ("parent: received: %d, %d, [%d,%d,%d]\n",
-                    rsp.d, rsp.e, rsp.f[0], rsp.f[1], rsp.f[2]);
-
+            j++;
+            }
+           }
+            }
             sleep (1);
-
-            waitpid (processID, NULL, 0);   // wait for the child
 
             mq_close (mq_fd_response);
             mq_close (mq_fd_request);
             mq_unlink (mq_name1);
             mq_unlink (mq_name2);
-        }
     }
 
     //note to self
