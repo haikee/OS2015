@@ -16,30 +16,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <errno.h>		  // for perror()
-#include <unistd.h>		 // for getpid()
-#include <mqueue.h>		 // for mq-stuff
-#include <time.h>		   // for time()
+#include <errno.h>		// for perror()
+#include <unistd.h>		// for getpid()
+#include <mqueue.h>		// for mq-stuff
+#include <time.h>		// for time()
 #include <complex.h>
 
 #include "settings.h"
 #include "common.h"
-
-// get the attribute of the message queue
-struct mq_attr getattr(mqd_t mq_fd)
-{
-	struct mq_attr	attr;
-	int				rtnval;
-	
-	rtnval = mq_getattr(mq_fd, &attr);
-	if (rtnval == -1)
-	{
-		perror("mq_getattr() failed");
-		exit (1);
-	}
-
-	return attr;
-}
 
 static void rsleep (int t);
 
@@ -82,13 +66,13 @@ int main (int argc, char * argv[])
 	// TODO:
 	// (see message_queue_test() in interprocess_basic.c)
 	//  v open the two message queues (whose names are provided in the arguments)
-	//  * repeatingly:
+	//  v repeatingly:
 	//	  - read from a message queue the new job to do
 	//	  - wait a random amount of time (e.g. rsleep(10000);)
 	//	  - do that job (use mandelbrot_point() if you like)
 	//	  - write the results to a message queue
 	//	until there are no more jobs to do
-	//  * close the message queues
+	//  v close the message queues
 
 	if (argc != 2) {
 		printf("Wrong number of arguments.\n");
@@ -104,8 +88,7 @@ int main (int argc, char * argv[])
 	mq_fd_request = mq_open(argv[0], O_RDONLY);
 	mq_fd_response = mq_open(argv[1], O_WRONLY);
 	
-	bool hasjob = true;
-	while (hasjob)
+	while (true)
 	{
 		// sleep a random amount of time
 		rsleep(1000);
@@ -166,5 +149,3 @@ static void rsleep (int t)
 	}
 	usleep (random () % t);
 }
-
-

@@ -18,12 +18,12 @@
 // settings for graphics (size of the window = X_PIXEL * Y_PIXEL pixels)
 #define X_PIXEL         880
 #define Y_PIXEL         660
-//#define X_LOWERLEFT     -2.0
-//#define Y_LOWERLEFT     -1.0
-//#define STEP            0.003
-#define X_LOWERLEFT     -0.65
-#define Y_LOWERLEFT     -0.5
-#define STEP            0.0001
+#define X_LOWERLEFT     -2.0
+#define Y_LOWERLEFT     -1.0
+#define STEP            0.003
+//#define X_LOWERLEFT     -0.65
+//#define Y_LOWERLEFT     -0.5
+//#define STEP            0.0001
 
 // lower left pixel (0,0) has coordinate
 //                  (X_LOWERLEFT, Y_LOWERLEFT)

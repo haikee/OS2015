@@ -20,8 +20,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <unistd.h>		 // for execlp
-#include <mqueue.h>		 // for mq
+#include <unistd.h>		// for execlp
+#include <mqueue.h>		// for mq
 
 #include "settings.h"
 #include "output.h"
