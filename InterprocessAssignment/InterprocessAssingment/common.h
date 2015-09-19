@@ -11,22 +11,18 @@
 
 #include "settings.h"
 
-
-// TODO: put your definitions of the datastructures here
+// Request message queue structure
 typedef struct
 {
-    // a data structure with 3 members
-    int                     a; //y-value
-    int                     b;//unused
-    int                     c;//unused
+    int                     y;			// y row value
+    bool					done;		// signal; stop working if true
 } MQ_REQUEST_MESSAGE;
 
+// Response message queue structure
 typedef struct
 {
-    // a data structure with 3 members, where the last member is an array with 3 elements
-    int                     d; //y-value
-    int                     e; //something...usefull??
-    int                     f[X_PIXEL];//color
+    int                     y;			// y row value
+    int                     v[X_PIXEL]; // array of pixel values
 } MQ_RESPONSE_MESSAGE;
 
 
