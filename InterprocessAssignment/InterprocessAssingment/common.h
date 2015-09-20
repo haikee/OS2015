@@ -2,6 +2,9 @@
  * Operating Systems  (2INC0)  Practical Assignment
  * Interprocess Communication
  *
+ * Haike Franssen (0864114)
+ * Jochem Kuijpers (0838617)
+ 
  * Contains definitions which are commonly used by the farmer and the workers
  *
  */

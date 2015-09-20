@@ -3,7 +3,7 @@
  * Interprocess Communication
  *
  * Haike Franssen (0864114)
- * STUDENT_NAME_2 (STUDENT_NR_2)
+ * Jochem Kuijpers (0838617)
  *
  * Grading:
  * Students who hand in clean code that fully satisfies the minimum requirements will get an 8.
