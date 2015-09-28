@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1443439311 source:/home/student/Assignments/OS2015/Threaded Application/prime.c
+	<stdio.h>
+	<stdlib.h>
+	<stdbool.h>
+	<unistd.h>
+	<time.h>
+	<pthread.h>
+	<math.h>
+	"prime.h"
+
+1443436995 /home/student/Assignments/OS2015/Threaded Application/prime.h
+
